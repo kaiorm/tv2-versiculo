@@ -42,11 +42,18 @@
         const resp = await fetch(proxy + encodeURIComponent(url));
         if (!resp.ok) throw new Error('Falha no proxy');
         const html = await resp.text();
-        const imgMatch = html.match(/<img[^>]+src="([^"]+versiculo-del-dia[^"]+)"/i);
-        if (!imgMatch) throw new Error('Imagem não encontrada');
-        const imgUrl = imgMatch[1];
+
+        // Cria DOM virtual para buscar imagem com mais precisão
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // Tenta encontrar a primeira imagem grande da área principal
+        const imagem = doc.querySelector('img[src*="versiculo-del-dia"], .content img, .img-responsive, article img');
+
+        if (!imagem || !imagem.src) throw new Error('Imagem não encontrada');
+
         document.getElementById('verso-container').innerHTML = `
-          <img src="${imgUrl}" alt="Versículo do Dia" />
+          <img src="${imagem.src}" alt="Versículo do Dia" />
         `;
       } catch (e) {
         document.getElementById('verso-container').innerHTML = `
