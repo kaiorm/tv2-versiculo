@@ -1,69 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="UTF-8" />
   <title>Versículo do Dia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    html, body {
-      margin: 0; padding: 0;
-      height: 100%;
+    body {
+      margin: 0;
+      padding: 0;
       background: #fff;
-      display: flex; align-items: center; justify-content: center;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 5vw;
+      box-sizing: border-box;
     }
-    #verso-container {
-      transform: scale(1.8);
-      transform-origin: top center;
-      max-width: 90vw;
-      max-height: 90vh;
+    h1 {
+      font-size: 4vw;
+      margin-bottom: 2vh;
+      color: #222;
     }
-    img {
-      width: 100%;
-      height: auto;
-      display: block;
+    .verso {
+      font-size: 2.8vw;
+      font-weight: 400;
+      color: #111;
+      margin-bottom: 2vh;
+    }
+    .ref {
+      font-size: 2.2vw;
+      color: #666;
     }
     .erro {
       font-size: 2vw;
       color: #900;
-      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div id="verso-container">
-    <div class="erro">Carregando...</div>
-  </div>
+  <h1>Versículo do Dia</h1>
+  <div class="verso" id="versiculo">Carregando versículo...</div>
+  <div class="ref" id="referencia"></div>
 
   <script>
-    async function carregarVersiculo() {
-      const proxy = 'https://api.allorigins.win/raw?url=';
-      const url = 'https://www.bibliatodo.com/pt/online/versiculo-del-dia';
-      try {
-        const resp = await fetch(proxy + encodeURIComponent(url));
-        if (!resp.ok) throw new Error('Falha no proxy');
-        const html = await resp.text();
-
-        // Cria DOM virtual para buscar imagem com mais precisão
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        // Tenta encontrar a primeira imagem grande da área principal
-        const imagem = doc.querySelector('img[src*="versiculo-del-dia"], .content img, .img-responsive, article img');
-
-        if (!imagem || !imagem.src) throw new Error('Imagem não encontrada');
-
-        document.getElementById('verso-container').innerHTML = `
-          <img src="${imagem.src}" alt="Versículo do Dia" />
-        `;
-      } catch (e) {
-        document.getElementById('verso-container').innerHTML = `
-          <div class="erro">Erro ao carregar o versículo.</div>
-        `;
-        console.error(e);
-      }
-    }
-
-    carregarVersiculo();
+    fetch('https://beta.ourmanna.com/api/v1/get?format=json&order=daily&language=pt')
+      .then(response => response.json())
+      .then(data => {
+        const texto = data.verse.details.text;
+        const ref = data.verse.details.reference;
+        document.getElementById('versiculo').textContent = `"${texto}"`;
+        document.getElementById('referencia').textContent = ref;
+      })
+      .catch(err => {
+        document.getElementById('versiculo').innerHTML = '<span class="erro">Erro ao carregar versículo.</span>';
+        console.error(err);
+      });
   </script>
 </body>
 </html>
