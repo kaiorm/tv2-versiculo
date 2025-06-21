@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Versículo do Dia</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: #ffffff; /* fundo branco */
       height: 100%;
-      overflow: hidden;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .iframe-container {
-      width: 100%;
-      height: 100%;
-      transform: scale(1.8); /* ajuste conforme necessário */
+    #content {
+      transform: scale(2); /* ajuste aqui conforme necessário */
       transform-origin: top center;
-    }
-    iframe {
       width: 100%;
-      height: 100%;
-      border: none;
     }
   </style>
 </head>
 <body>
-  <div class="iframe-container">
-    <iframe src="https://www.bibliatodo.com/pt/online/versiculo-del-dia"></iframe>
-  </div>
+  <div id="content">Carregando...</div>
+  <script>
+    fetch('https://api.allorigins.win/raw?url=https://www.bibliatodo.com/pt/online/versiculo-del-dia')
+      .then(r => r.text())
+      .then(html => document.getElementById('content').innerHTML = html)
+      .catch(() => document.getElementById('content').innerHTML = 'Erro ao carregar.');
+  </script>
 </body>
 </html>
