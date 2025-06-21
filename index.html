@@ -6,28 +6,57 @@
   <title>Versículo do Dia</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       height: 100%;
       background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
-    #content {
-      transform: scale(2); /* ajuste aqui conforme necessário */
+    #verso-container {
+      transform: scale(1.8);
       transform-origin: top center;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+    img {
       width: 100%;
+      height: auto;
+      display: block;
+    }
+    .erro {
+      font-size: 2vw;
+      color: #900;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div id="content">Carregando...</div>
+  <div id="verso-container">
+    <div class="erro">Carregando...</div>
+  </div>
+
   <script>
-    fetch('https://api.allorigins.win/raw?url=https://www.bibliatodo.com/pt/online/versiculo-del-dia')
-      .then(r => r.text())
-      .then(html => document.getElementById('content').innerHTML = html)
-      .catch(() => document.getElementById('content').innerHTML = 'Erro ao carregar.');
+    async function carregarVersiculo() {
+      const proxy = 'https://api.allorigins.win/raw?url=';
+      const url = 'https://www.bibliatodo.com/pt/online/versiculo-del-dia';
+      try {
+        const resp = await fetch(proxy + encodeURIComponent(url));
+        if (!resp.ok) throw new Error('Falha no proxy');
+        const html = await resp.text();
+        const imgMatch = html.match(/<img[^>]+src="([^"]+versiculo-del-dia[^"]+)"/i);
+        if (!imgMatch) throw new Error('Imagem não encontrada');
+        const imgUrl = imgMatch[1];
+        document.getElementById('verso-container').innerHTML = `
+          <img src="${imgUrl}" alt="Versículo do Dia" />
+        `;
+      } catch (e) {
+        document.getElementById('verso-container').innerHTML = `
+          <div class="erro">Erro ao carregar o versículo.</div>
+        `;
+        console.error(e);
+      }
+    }
+
+    carregarVersiculo();
   </script>
 </body>
 </html>
