@@ -63,7 +63,7 @@
     const v = versiculos[index];
 
     document.getElementById("tema").textContent = v["tema"];
-    document.getElementById("versiculo").textContent = `"$Os comandantes filisteus continuaram saindo para a batalha, e, todas as vezes que o faziam, Davi tinha mais habilidade do que os outros oficiais de Saul, e ele tornou-se ainda mais famoso."`;
+    document.getElementById("versiculo").textContent = `"${v["texto"].replace(/^[$•–—\s]+/, '')}"`;
     document.getElementById("referencia").textContent = v["referencia"];
   </script>
 </body>
